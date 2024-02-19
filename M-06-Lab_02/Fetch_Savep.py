@@ -1,20 +1,38 @@
-"""
-Problem:
-Download and  Cange desktop wallpapers automatically
-"""
 import requests
 import json
-api_url = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"
-response = requests.get(api_url)
+import PyWallpaper
 
-content = response.content.decode('UTF-8')
+# Replace 'YOUR_API_KEY' with your actual NASA API key
+api_key = "YOUR_API_KEY"
 
-dict_content=json.loads(content)
+# API endpoint URL
+api_url = f"https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"
 
-image_url= dict_content['url']
+try:
+    # Make a request to the API
+    response = requests.get(api_url)
+    response.raise_for_status()  # Raise an exception for HTTP errors
 
-res = requests.get(image_url)
-print(res)
+    # Parse the JSON content
+    data = response.json()
 
-with open('apod.png', 'wb') as image:
-    image.write(res.content)
+    # Extract the image URL
+    image_url = data['url']
+
+    # Download the image
+    image_response = requests.get(image_url)
+    image_response.raise_for_status()  # Raise an exception for HTTP errors
+
+    # Save the image to a file
+    with open('apoddd.png', 'wb') as image_file:
+        image_file.write(image_response.content)
+
+    # Set the wallpaper
+    PyWallpaper.change_wallpaper(r"./apoddd.png")
+
+except requests.RequestException as e:
+    print(f"Error during request: {e}")
+except json.JSONDecodeError as e:
+    print(f"Error decoding JSON: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
