@@ -18,6 +18,7 @@ class School:
     def __init__(self, name, teachers, courses, students):
         self.name = name
         self. teachers = teachers
+        self.courses = courses
         self.students = students
     def get_students(self):
         for student in self.students:
@@ -41,3 +42,4 @@ students = [student_1, student_2, student_3]
 my_school = School(school_name, teachers, courses, students)
 print(my_school.__dict__)
 my_school.get_students()
+print(type(my_school))
