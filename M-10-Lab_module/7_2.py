@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QPixmap, QImage, QIcon
+from PyQt5.QtGui import QPixmap, QImage, QIcon, QPainter, QColor
 from PyQt5.QtCore import QTimer
 import cv2
 import datetime
@@ -75,6 +75,9 @@ class Window(QWidget):
         """update frame"""
         _,self.frame = self.cap.read()
 
+        if self.recording:  # Check if recording is in progress
+            self.draw_red_circle()  # Draw red circle on the frame
+
         frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
         height, width, channel = frame.shape
         step = channel * width
@@ -91,11 +94,21 @@ class Window(QWidget):
     def record(self):
         """record video"""
         print('recording starts.........')
-    
+        self.recording = True  # Set recording flag to True
+
     def get_time(self):
         now = datetime.datetime.now()
         self.dt = now.strftime("%m-%d-%y, %H-%M-%S")
         print(self.dt)
+
+    def draw_red_circle(self):
+        """Draw a red circle on the frame"""
+        # Calculate center and radius of the circle
+        center = (self.img_width // 2, self.img_height // 2)
+        radius = min(self.img_width, self.img_height) // 4
+
+        # Draw the red circle on the frame
+        cv2.circle(self.frame, center, radius, (0, 0, 255), -1)
 
 #run
 cap_icon_paths = 77
@@ -106,3 +119,5 @@ stop_icon_path = 'E:\Phitron-1\OOP & Python Programming\M-10-Lab_module\cam/stop
 app = QApplication(sys.argv)
 win = Window()
 sys.exit(app.exec_())
+
+
